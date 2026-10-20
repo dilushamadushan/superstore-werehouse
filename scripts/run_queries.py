@@ -42,45 +42,8 @@ def load_queries() -> list[tuple[str, str, str]]:
     return queries
 
 
-QUERY_METADATA = {
-    # Time & Trends
-    "Q1":  ("Annual sales, profit, and margin % progression"),
-    "Q2":  ("Monthly seasonality and revenue trajectory over years"),
-    "Q3":  ("Q1-Q4 seasonal cross-year comparison table (Pivot)"),
-    "Q12": ("Customer buying volume comparison: Weekdays vs Weekends"),
-    "Q13": ("Official US public holiday impact on sales volume"),
-    "Q19": ("Year-over-year (YoY) revenue growth % using SQL LAG()"),
-    "Q24": ("Fiscal quarter KPI summary (orders, volume, revenue, margin)"),
-
-    # Products & Profitability
-    "Q4":  ("Top 10 best-selling catalog products by total revenue"),
-    "Q5":  ("Bottom 10 loss-making products (loss-leaders to review)"),
-    "Q6":  ("High-level revenue & profit margin by product category"),
-    "Q18": ("Deep dive into loss-making products with negative net profit"),
-    "Q20": ("Multi-level category and sub-category subtotals using ROLLUP"),
-    "Q22": ("Profitability ranking of sub-categories within parent category"),
-
-    # Customers & Orders
-    "Q7":  ("Revenue, customers, and order value across customer segments"),
-    "Q8":  ("Top 10 highest-spending VIP customers and order volume"),
-    "Q23": ("Customer retention tiers: One-time, Occasional, Regular, Loyal"),
-    "Q25": ("Top 10 highest-value individual order transactions"),
-
-    # Geography & Stores
-    "Q9":  ("Regional revenue, profit, and margins (Central/East/South/West)"),
-    "Q10": ("Top 5 most profitable US retail store states"),
-    "Q11": ("Quarterly top-performing retail store using window RANK()"),
-    "Q17": ("Matrix of product category sales across all 4 regions"),
-
-    # Promotions & Operations
-    "Q14": ("Compare promotional orders vs non-promotional order metrics"),
-    "Q15": ("Top 10 promotional campaigns ranked by total revenue"),
-    "Q16": ("Margin erosion analysis across discount percentage tiers"),
-    "Q21": ("Shipping mode performance (order lines, lag days, profit)"),
-}
-
 CATEGORIES = [
-    ("TIME & TREND ANALYSIS", ["Q1", "Q2", "Q3", "Q12", "Q13", "Q19", "Q24"]),
+    ("TIME & TRENDS", ["Q1", "Q2", "Q3", "Q12", "Q13", "Q19", "Q24"]),
     ("PRODUCTS & PROFITABILITY", ["Q4", "Q5", "Q6", "Q18", "Q20", "Q22"]),
     ("CUSTOMERS & ORDERS", ["Q7", "Q8", "Q23", "Q25"]),
     ("GEOGRAPHY & STORES", ["Q9", "Q10", "Q11", "Q17"]),
@@ -89,21 +52,15 @@ CATEGORIES = [
 
 
 def list_available_queries():
-    """Prints the list of all available business queries categorized with purpose."""
+    """Prints a clean list of all 25 queries showing only ID and query name."""
     queries_dict = {qid: title for qid, title, _ in load_queries()}
 
-    print("\n" + "=" * 90)
-    print("        25 BUSINESS INTELLIGENCE ANALYTICAL QUERIES & THEIR BUSINESS PURPOSE")
-    print("=" * 90)
-
+    print("\nAvailable Analytical Queries (25 Total):")
     for cat_name, qids in CATEGORIES:
-        print(f"\n  [-- {cat_name} --]")
+        print(f"\n  [{cat_name}]")
         for qid in qids:
             title = queries_dict.get(qid, "")
-            purpose = QUERY_METADATA.get(qid, title)
-            print(f"    {qid:<5} | {title:<36} | {purpose}")
-
-    print("\n" + "=" * 90)
+            print(f"    {qid:<5}: {title}")
 
 
 def run_queries(only: set[str] | list[str] | None = None, save_csv: bool = True) -> int:
