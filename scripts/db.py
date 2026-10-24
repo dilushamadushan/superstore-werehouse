@@ -13,7 +13,27 @@ load_dotenv(PROJECT_ROOT / ".env")
 
 _ENGINE: Engine | None = None
 
+
+def validate_db_config(env: dict | None = None) -> None:
+    """Validate required DB settings before any connection is attempted."""
+    source = os.environ if env is None else env
+    required = ["DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD"]
+    missing = [key for key in required if not str(source.get(key, "")).strip()]
+    if missing:
+        raise ValueError(
+            "Missing required database settings: " + ", ".join(missing)
+            + ". Copy .env.example to .env and fill in the values."
+        )
+
+    try:
+        int(str(source.get("DB_PORT", "")).strip())
+    except ValueError as exc:
+        raise ValueError("DB_PORT must be a valid integer.") from exc
+
+
 def get_db_url() -> str:
+    validate_db_config()
+
     db_url = os.getenv("DB_URL")
     if db_url:
         if db_url.startswith("postgresql://"):
@@ -58,6 +78,8 @@ def get_connection():
 
 @contextmanager
 def get_raw_connection():
+    validate_db_config()
+
     host = os.getenv("DB_HOST")
     port = int(os.getenv("DB_PORT", "5432"))
     dbname = os.getenv("DB_NAME", "postgres")

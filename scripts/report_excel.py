@@ -6,23 +6,24 @@ Builds an executive-grade, multi-sheet Excel workbook using openpyxl.
 Workbook structure:
   0. Cover          – Title banner, generation timestamp, stylized KPI tiles
   1. KPI Summary    – Headline metrics table
-  2. Annual Trend   – Yearly sales, profit & margin with bar chart
-  3. Quarterly Trend– Quarterly pivot with line chart
-  4. Category       – Category performance with bar chart
-  5. Region         – Regional breakdown with bar chart
-  6. Customer Seg   – Segment analysis with pie chart
-  7. Ship Mode      – Shipping mode performance with bar chart
-  8. Promotions     – Promotional vs non-promotional analysis
-  9. Discount       – Discount band vs profit with bar chart
-  10. Top Products  – Top 10 revenue products
-  11. Top Customers – Top 10 revenue customers
-  12. Fiscal KPI    – Fiscal quarter KPIs with line chart
-  13. YoY Growth    – Year-over-year revenue growth %
-  14. Loyalty Tiers – Customer loyalty tiers with bar chart
-  15. Sub-Category  – Sub-category profitability ranking
-  16. Loss Products – Loss-making catalog products
-  17. Top Orders    – Top 10 high-value order transactions
-  18. All Queries   – Complete raw data dump for all 25 queries
+  2. Query Results  – Quick access to the full query output by business question
+  3. Annual Trend   – Yearly sales, profit & margin with bar chart
+  4. Quarterly Trend– Quarterly pivot with line chart
+  5. Category       – Category performance with bar chart
+  6. Region         – Regional breakdown with bar chart
+  7. Customer Seg   – Segment analysis with pie chart
+  8. Ship Mode      – Shipping mode performance with bar chart
+  9. Promotions     – Promotional vs non-promotional analysis
+  10. Discount      – Discount band vs profit with bar chart
+  11. Top Products  – Top 10 revenue products
+  12. Top Customers – Top 10 revenue customers
+  13. Fiscal KPI    – Fiscal quarter KPIs with line chart
+  14. YoY Growth    – Year-over-year revenue growth %
+  15. Loyalty Tiers – Customer loyalty tiers with bar chart
+  16. Sub-Category  – Sub-category profitability ranking
+  17. Loss Products – Loss-making catalog products
+  18. Top Orders    – Top 10 high-value order transactions
+  19. All Queries   – Complete raw data dump for all 25 queries
 """
 
 import math
@@ -251,6 +252,34 @@ def generate_excel_report(path: Path, kpis: dict, all_dfs: dict, ts_str: str, qu
         {"Metric": "Holiday Sales Days",   "Value": kpis.get("holiday_days", 0)},
     ])
     _write_df_to_ws(ws_kpi, kpi_df, "Key Performance Indicators")
+
+    # ────────────────────────────────────────────────────────────────────
+    # 2. Query Results Sheet
+    # ────────────────────────────────────────────────────────────────────
+    ws_query = _make_sheet("Query Results")
+    ws_query.freeze_panes = "A3"
+    ws_query.merge_cells("A1:F1")
+    title = ws_query["A1"]
+    title.value = "Query Results"
+    title.font = _font(bold=True, size=16, color="FFFFFF")
+    title.fill = _hex_fill(DARK_BG)
+    title.alignment = _align(h="center")
+
+    catalog = queries_catalog or []
+    row_ptr = 3
+    for qid, qtitle, _ in catalog:
+        df = all_dfs.get(qid)
+        if df is None or df.empty:
+            continue
+        max_col = max(len(df.columns), 1)
+        ws_query.merge_cells(start_row=row_ptr, start_column=1, end_row=row_ptr, end_column=max_col)
+        header_cell = ws_query.cell(row_ptr, 1, f"[{qid}]  {qtitle}")
+        header_cell.font = _font(bold=True, size=11, color="FFFFFF")
+        header_cell.fill = _hex_fill(DARK_BG)
+        header_cell.alignment = _align(h="left")
+        row_ptr += 1
+        row_ptr = _write_df_to_ws(ws_query, df, start_row=row_ptr)
+        row_ptr += 2
 
     # ────────────────────────────────────────────────────────────────────
     # Chart Helper Functions

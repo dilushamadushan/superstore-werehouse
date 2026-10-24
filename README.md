@@ -5,7 +5,7 @@ An end-to-end cloud Data Warehouse solution built on **PostgreSQL (Supabase)**, 
 This repository implements a complete Modern Data Stack workflow:
 1. **Staging Ingestion (ELT)**: Ingests raw CSV orders and enriches with external APIs (Nager.Date public holidays) and reference dimensions (stores, marketing promotions).
 2. **Dimensional Modeling (Star Schema)**: Transforms flat transactional records into Kimball-style dimensional models (`staging` & `dw` schemas).
-3. **Business Intelligence & Analytics**: Executes 20 analytical SQL queries addressing real-world executive questions and automatically exports results to CSV.
+3. **Business Intelligence & Analytics**: Executes 25 analytical SQL queries addressing real-world executive questions and automatically exports results to CSV.
 4. **Interactive CLI Console**: A unified terminal menu (`main.py`) for managing the entire warehouse lifecycle.
 
 ---
@@ -58,8 +58,8 @@ This repository implements a complete Modern Data Stack workflow:
                                         v
 +-------------------------------------------------------------------------------+
 |                            ANALYTICS & REPORTING                              |
-|   * 20 Executive BI Queries (sql/02_queries.sql)                              |
-|   * Automatic CSV exports saved to results/Q1.csv ... results/Q20.csv         |
+|   * 25 Executive BI Queries (sql/02_queries.sql)                              |
+|   * Automatic CSV exports saved to results/Q1.csv ... results/Q25.csv         |
 +-------------------------------------------------------------------------------+
 ```
 
@@ -79,6 +79,15 @@ This repository implements a complete Modern Data Stack workflow:
 - **`dw.dim_customer`**: 793 distinct enterprise and retail customers with `segment` (Consumer, Corporate, Home Office).
 - **`dw.dim_store`**: 49 primary regional retail centers (one per US state placed in its highest-order volume city).
 - **`dw.dim_promo`**: 21 marketing discount campaigns (New Year, Summer Sale, Back to School, Black Friday, Christmas) plus record `0` for non-promoted orders.
+
+---
+
+## Documentation
+
+- [docs/README.md](docs/README.md) — documentation index
+- [docs/project-overview.md](docs/project-overview.md) — warehouse architecture and business purpose
+- [docs/setup-guide.md](docs/setup-guide.md) — setup, installation, and environment configuration
+- [CONTRIBUTING.md](CONTRIBUTING.md) — contribution guidelines and workflow
 
 ---
 
@@ -139,8 +148,9 @@ python -m venv venv
 .\venv\Scripts\Activate.ps1
 # Windows Command Prompt:
 .\venv\Scripts\activate.bat
-# Linux/macOS:
-source venv/bin/activate
+# Bash:
+source venv/Scripts/activate
+
 
 # Install required dependencies
 pip install -r requirements.txt
@@ -248,7 +258,7 @@ python scripts/run_queries.py --list
 
 ## Analytical Queries Overview
 
-The 20 executive queries in [sql/02_queries.sql](file:///c:/Users/DELL/Desktop/project/werehouse/sql/02_queries.sql) cover key business domains:
+The 25 executive queries in [sql/02_queries.sql](sql/02_queries.sql) cover key business domains:
 
 | ID | Business Question / Focus | Key Technique / Dimensions |
 | :---: | :--- | :--- |
@@ -274,7 +284,7 @@ The 20 executive queries in [sql/02_queries.sql](file:///c:/Users/DELL/Desktop/p
 | **Q20**| Hierarchical Category & Sub-category subtotals | Dimensional rollups (`GROUP BY ROLLUP(...)`) |
 
 Query outputs are printed to the terminal and automatically saved to:
-`results/Q1.csv` through `results/Q20.csv`.
+`results/Q1.csv` through `results/Q25.csv`.
 
 ---
 

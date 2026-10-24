@@ -1,6 +1,6 @@
 """
 Analytics Query Runner:
-Executes the 20 Superstore business intelligence queries defined in sql/02_queries.sql.
+Executes the 25 Superstore business intelligence queries defined in sql/02_queries.sql.
 Outputs tabular results to terminal and exports CSVs to the results/ directory.
 Uses pure ASCII characters for 100% Windows console compatibility.
 """

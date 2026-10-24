@@ -12,6 +12,7 @@ from sqlalchemy import text
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from db import get_engine, get_connection
+from quality_checks import validate_staging_dataframe
 
 
 def load_staging_orders(csv_file: str | Path | None = None) -> int:
@@ -30,6 +31,30 @@ def load_staging_orders(csv_file: str | Path | None = None) -> int:
     print(f"\n[EXTRACT] Reading CSV: {csv_file.name}...")
     df = pd.read_csv(csv_file, encoding="latin1", dtype={"Postal Code": str})
     print(f"  -> Rows read from file: {len(df):,}")
+
+    validate_staging_dataframe(df.rename(columns={
+        "Row ID": "row_id",
+        "Order ID": "order_id",
+        "Order Date": "order_date",
+        "Ship Date": "ship_date",
+        "Ship Mode": "ship_mode",
+        "Customer ID": "customer_id",
+        "Customer Name": "customer_name",
+        "Segment": "segment",
+        "Country": "country",
+        "City": "city",
+        "State": "state",
+        "Postal Code": "postal_code",
+        "Region": "region",
+        "Product ID": "product_id",
+        "Category": "category",
+        "Sub-Category": "sub_category",
+        "Product Name": "product_name",
+        "Sales": "sales",
+        "Quantity": "quantity",
+        "Discount": "discount",
+        "Profit": "profit",
+    }))
 
     # Standardize column names to snake_case matching warehouse schema
     df = df.rename(
