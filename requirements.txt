@@ -6,3 +6,5 @@ faker
 requests
 openpyxl
 xlsxwriter
+plotly
+jinja2
